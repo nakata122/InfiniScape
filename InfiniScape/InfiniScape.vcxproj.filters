@@ -19,12 +19,15 @@
     <Filter Include="Primitives">
       <UniqueIdentifier>{2eb20e2f-544e-47c4-8fa9-05b3d56a2864}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{87fa32d2-a25f-476e-9d27-dda1e858a2a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Programs">
+      <UniqueIdentifier>{cc7633da-ab68-437a-92f8-c3d7dbfa141d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="shaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
@@ -34,7 +37,22 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Plane.h">
+      <Filter>Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="lodepng.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Program.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightMap.h">
+      <Filter>Programs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -44,9 +62,6 @@
     <ClCompile Include="InfiniScape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="shaders.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,7 +69,22 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Plane.cpp">
+      <Filter>Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="shaders.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="lodepng.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HeightMap.cpp">
+      <Filter>Programs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

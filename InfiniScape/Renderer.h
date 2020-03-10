@@ -1,26 +1,25 @@
 #pragma once
 
+#include "Program.h"
 #include "GLObject.h"
 class Renderer
 {
 	GLFWwindow* window;
-	GLuint programID[10];
-	GLuint currentProgram;
-	int numPrograms = 0;
+	Program *programs[10];
+	int programCount = 0;
 
 
 	glm::mat4 Projection;
 	glm::mat4 View;
-	GLuint MatrixID;
 
-	GLObject objects[10];
-	int numObjects;
+	GLObject *objects[10];
+	int objectCount;
 public:
 	Renderer();
 	void render();
-	void addProgram(const char* vertShader, const char* fragShader);
+	void addProgram(Program *p);
 	GLuint getProgram(int index);
-	void addObject(GLObject obj);
+	void addObject(GLObject *obj);
 	GLFWwindow* getWindow();
 };
 

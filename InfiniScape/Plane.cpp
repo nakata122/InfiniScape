@@ -12,16 +12,21 @@
 
 Plane::Plane(int subdivision)
 {
-
 	vertices.resize(subdivision);
 	numTriangles = subdivision * 2;
 	int minS = sqrt(subdivision);
+
+	texCoords.resize(subdivision);
 
 	for (int i = 0; i < minS; i++)
 	{
 		for (int j = 0; j < minS; j++)
 		{
 			vertices[i * minS + j] = glm::vec3(i, (float)(rand()%10)/10, j);
+
+			float xCoord = (float)(j + 1.01) / (float)minS;
+			float yCoord = (float)(i + 1.01) / (float)minS;
+			texCoords[i * minS + j] = glm::vec2(xCoord, yCoord);
 		}
 	}
 

@@ -18,7 +18,6 @@ public:
 	Renderer();
 	void render();
 	void addProgram(Program *p);
-	GLuint getProgram(int index);
 	void addObject(GLObject *obj);
 	GLFWwindow* getWindow();
 };

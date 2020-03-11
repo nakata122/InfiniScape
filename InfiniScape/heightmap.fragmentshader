@@ -4,11 +4,13 @@
 out vec4 color;
 
 in vec2 UV;
+in float height;
 
 // Values that stay constant for the whole mesh.
-uniform sampler2D myTextureSampler;
+uniform sampler2D Grass;
+uniform sampler2D Snow;
 
 void main(){
 	
-	color = texture(myTextureSampler, UV);
+	color = mix(texture(Grass, UV)*0.5, texture(Snow, UV), max(0.01, (height/10)));
 }

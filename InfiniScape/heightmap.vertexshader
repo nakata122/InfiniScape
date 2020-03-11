@@ -8,6 +8,7 @@ layout(location = 1) in vec2 vertexUV;
 uniform mat4 MVP;
 
 out vec2 UV;
+out float height;
 
 void main(){
 
@@ -15,4 +16,5 @@ void main(){
 	gl_PointSize = 5.0;
 
 	UV = vertexUV;
+	height = position.y;
 }

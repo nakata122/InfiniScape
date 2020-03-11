@@ -5,7 +5,8 @@ class HeightMap :
 	public Program
 {
 	GLuint MatrixID;
-	GLuint TextureID;
+	GLuint Texture1ID;
+	GLuint Texture2ID;
 public:
 	HeightMap();
 	void bindProgram(GLObject &obj);

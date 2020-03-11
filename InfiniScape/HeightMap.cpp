@@ -10,7 +10,8 @@ HeightMap::HeightMap()
 	LoadShaders("heightmap.vertexshader", "heightmap.fragmentshader");
 
 	MatrixID = glGetUniformLocation(programID, "MVP");
-	TextureID = glGetUniformLocation(programID, "myTextureSampler");
+	Texture1ID = glGetUniformLocation(programID, "Grass");
+	Texture2ID = glGetUniformLocation(programID, "Snow");
 }
 
 void HeightMap::bindProgram(GLObject &obj)
@@ -24,5 +25,12 @@ void HeightMap::bindProgram(GLObject &obj)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, obj.getTexture(0));
 	// Set our "myTextureSampler" sampler to use Texture Unit 0
-	glUniform1i(TextureID, 0);
+	glUniform1i(Texture1ID, 0);
+
+
+	// Bind our texture in Texture Unit 1
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, obj.getTexture(1));
+	// Set our "myTextureSampler" sampler to use Texture Unit 0
+	glUniform1i(Texture2ID, 1);
 }

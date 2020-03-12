@@ -56,16 +56,17 @@ float Plane::perlin(float x, float y) {
 	return value;
 }
 
-float Plane::OctavePerlin(float x, float y, int octaves) {
-	double total = 0;
-	double frequency = 1;
-	double amplitude = 1;
-	double maxValue = 0;  // Used for normalizing result to 0.0 - 1.0
+float Plane::OctavePerlin(float x, float y, int octaves, float persistence) {
+	float total = 0;
+	float frequency = 1;
+	float amplitude = 1;
+	float maxValue = 0;  // Used for normalizing result to 0.0 - 1.0
 	for (int i = 0; i < octaves; i++) {
 		total += perlin(x * frequency, y * frequency) * amplitude;
 
 		maxValue += amplitude;
 
+		amplitude *= persistence;
 		frequency *= 2;
 	}
 
@@ -73,8 +74,10 @@ float Plane::OctavePerlin(float x, float y, int octaves) {
 }
 
 
-Plane::Plane(int subdivision, int frequency)
+Plane::Plane(int s)
 {
+	subdivision = s;
+
 	generateNew();
 
 	vertices.resize(subdivision);
@@ -87,7 +90,7 @@ Plane::Plane(int subdivision, int frequency)
 	{
 		for (int j = 0; j < minS; j++)
 		{
-			float height = OctavePerlin((float)i, (float)j, 2)*40;
+			float height = OctavePerlin((float)i / frequency, (float)j / frequency, octaves, persistence)*amplitude;
 			vertices[i * minS + j] = glm::vec3(i, height, j);
 
 			float xCoord = (float)(j + 1.01) / (float)(minS);
@@ -113,8 +116,25 @@ Plane::Plane(int subdivision, int frequency)
 	}
 
 
-	updateBuffers();
+	generateBuffers();
 }
+
+void Plane::updateVertices()
+{
+	int minS = sqrt(subdivision);
+
+	for (int i = 0; i < minS; i++)
+	{
+		for (int j = 0; j < minS; j++)
+		{
+			float height = OctavePerlin((float)i / frequency, (float)j / frequency, octaves, persistence)*amplitude;
+			vertices[i * minS + j] = glm::vec3(i, height, j);
+		}
+	}
+
+	updateVerticexBuffer();
+}
+
 void Plane::generateNew()
 {
 	//if (Gradient != nullptr) delete[] Gradient;
@@ -127,8 +147,8 @@ void Plane::generateNew()
 		for (int j = 0; j < 1000; j++)
 		{
 			Gradient[i][j] = new float[2];
-			Gradient[i][j][0] = (float)(rand() % 10) / 10;
-			Gradient[i][j][1] = (float)(rand() % 10) / 10;
+			Gradient[i][j][0] = rand() % 10;
+			Gradient[i][j][1] = rand() % 10;
 		}
 	}
 }

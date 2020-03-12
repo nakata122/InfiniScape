@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include <iostream>
+#include <vector>
 
 // Include GLEW
 #include <GL/glew.h>
@@ -12,6 +13,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+// Include GUI
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 
 #include "shaders.h"
 #include "Program.h"
@@ -20,13 +26,41 @@
 
 Renderer::Renderer()
 {
-
 	// Initialise GLFW
 	if (!glfwInit())
 	{
 		fprintf(stderr, "Failed to initialize GLFW\n");
 		getchar();
 	}
+
+	initWindow();
+	initGUI();
+	glfwMakeContextCurrent(window);
+
+	GLuint VertexArrayID;
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
+
+	Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 1000.0f);
+
+	// Camera matrix
+	View = glm::lookAt(
+		glm::vec3(-8, 50, -8), // Camera is at (4,3,3), in World Space
+		glm::vec3(100, 0, 100), // and looks at the origin
+		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+	);
+
+	glEnable(GL_PROGRAM_POINT_SIZE);
+
+	// Enable depth test
+	glEnable(GL_DEPTH_TEST);
+	// Accept fragment if it closer to the camera than the former one
+	glDepthFunc(GL_LESS);
+
+}
+
+void Renderer::initWindow()
+{
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -56,31 +90,43 @@ Renderer::Renderer()
 
 	// Dark blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
+}
 
-	GLuint VertexArrayID;
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
+void Renderer::initGUI()
+{
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 1000.0f);
+	gui = glfwCreateWindow(500, 720, "Settings", NULL, NULL);
+	if (gui == NULL)
+		std::cout << "Error could not render gui" << std::endl;
+	glfwMakeContextCurrent(gui);
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-	// Camera matrix
-	View = glm::lookAt(
-		glm::vec3(-8, 50, -8), // Camera is at (4,3,3), in World Space
-		glm::vec3(100, 0, 100), // and looks at the origin
-		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-	);
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsClassic();
 
-	glEnable(GL_PROGRAM_POINT_SIZE);
-
-	// Enable depth test
-	glEnable(GL_DEPTH_TEST);
-	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS);
-
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(gui, true);
+	ImGui_ImplOpenGL3_Init("#version 330 core");
 }
 
 void Renderer::render()
 {
+	glfwMakeContextCurrent(window);
+
+	// Clear the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	for (int i = 0; i < objectCount; i++)
 	{
 		objects[i]->setMVP(Projection, View);
@@ -88,6 +134,56 @@ void Renderer::render()
 
 		objects[i]->draw();
 	}
+
+	// Swap buffers
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
+
+void Renderer::renderGUI(float *frequency, float *amplitude, float *persistence, int *octaves)
+{
+
+	glfwMakeContextCurrent(gui);
+
+	glfwPollEvents();
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	{
+
+		ImGui::Begin("Editor!");
+
+		static int counter = 0;
+
+		ImGui::SliderFloat("Frequency", frequency, 1, 100);
+		ImGui::SliderFloat("Amplitude", amplitude, 1, 100);
+		ImGui::SliderFloat("Persistence", persistence, 1, 10);
+		ImGui::SliderInt("Octaves", octaves, 1, 10);
+
+
+		if (ImGui::Button("Button"))
+			counter++;
+
+		ImGui::SameLine();
+		ImGui::Text("counter = %d", counter);
+
+
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::End();
+	}
+
+	// Rendering
+	ImGui::Render();
+	int display_w, display_h;
+	glfwGetFramebufferSize(gui, &display_w, &display_h);
+	glViewport(0, 0, display_w, display_h);
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	glfwSwapBuffers(gui);
 }
 
 void Renderer::addObject(GLObject *obj)
@@ -100,7 +196,9 @@ void Renderer::addProgram(Program *p)
 	programs[programCount++] = p;
 }
 
-GLFWwindow* Renderer::getWindow()
+bool Renderer::isClosed()
 {
-	return window;
+	return glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
+			glfwWindowShouldClose(window) == 0 &&
+			glfwWindowShouldClose(gui) == 0;
 }

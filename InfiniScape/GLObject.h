@@ -32,7 +32,8 @@ public:
 	~GLObject();
 
 	virtual void draw();
-	void updateBuffers();
+	void generateBuffers();
+	void updateVerticexBuffer();
 
 	void setMVP(glm::mat4 Projection, glm::mat4 View);
 	glm::mat4 getMVP();

@@ -64,11 +64,11 @@ glm::mat4 GLObject::getMVP()
 	return MVP;
 }
 
-void GLObject::updateBuffers()
+void GLObject::generateBuffers()
 {
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STREAM_DRAW);
 
 	glGenBuffers(1, &uvbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
@@ -77,6 +77,13 @@ void GLObject::updateBuffers()
 	glGenBuffers(1, &indexbuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0], GL_STATIC_DRAW);
+}
+
+void GLObject::updateVerticexBuffer()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), NULL, GL_STREAM_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(glm::vec3), vertices.data());
 }
 
 void GLObject::addTexture(GLuint texture)

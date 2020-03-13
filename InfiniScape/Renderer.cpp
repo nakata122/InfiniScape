@@ -9,9 +9,6 @@
 // Include GLFW
 #include <GLFW/glfw3.h>
 
-// Include GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 // Include GUI
 #include <imgui.h>
@@ -40,15 +37,6 @@ Renderer::Renderer()
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
-
-	Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 1000.0f);
-
-	// Camera matrix
-	View = glm::lookAt(
-		glm::vec3(-8, 50, -8), // Camera is at (4,3,3), in World Space
-		glm::vec3(100, 0, 100), // and looks at the origin
-		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-	);
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
@@ -123,13 +111,14 @@ void Renderer::initGUI()
 void Renderer::render()
 {
 	glfwMakeContextCurrent(window);
+	camera.computeMatrices(window);
 
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	for (int i = 0; i < objectCount; i++)
 	{
-		objects[i]->setMVP(Projection, View);
+		objects[i]->setMVP(camera.getProjection(), camera.getView());
 		programs[0]->bindProgram(*objects[i]);
 
 		objects[i]->draw();
@@ -159,7 +148,7 @@ void Renderer::renderGUI(float *frequency, float *amplitude, float *persistence,
 
 		ImGui::SliderFloat("Frequency", frequency, 1, 100);
 		ImGui::SliderFloat("Amplitude", amplitude, 1, 100);
-		ImGui::SliderFloat("Persistence", persistence, 1, 10);
+		ImGui::SliderFloat("Persistence", persistence, 0, 1);
 		ImGui::SliderInt("Octaves", octaves, 1, 10);
 
 

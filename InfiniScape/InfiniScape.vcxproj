@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="GLObject.h" />
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GLObject.cpp" />
     <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />

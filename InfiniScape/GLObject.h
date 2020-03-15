@@ -11,6 +11,7 @@
 class GLObject
 {
 	GLuint vertexbuffer;
+	GLuint normalbuffer;
 	GLuint indexbuffer;
 	GLuint uvbuffer;
 
@@ -21,6 +22,7 @@ class GLObject
 
 protected:
 	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> texCoords;
 	std::vector<unsigned short> indices;
 	glm::mat4 Model;
@@ -33,7 +35,7 @@ public:
 
 	virtual void draw();
 	void generateBuffers();
-	void updateVerticexBuffer();
+	void updatePositionBuffers();
 
 	void setMVP(glm::mat4 Projection, glm::mat4 View);
 	glm::mat4 getMVP();

@@ -1,0 +1,37 @@
+- Make window resizable
+✓ Add multithreading
+- Add infinite map generation
+- Add procedural texture generation
+- Add height map editor
+- Add dynamic chunk division
+- Add dynamic chunk generation
+- Add mesh tesselation
+- Add lightning
+- Add custom hills and valleys
+- Add water
+- Add water physics
+- Add island generation
+- Add procedural vegetation
+- Add rocks and details
+- Add rivers
+- Add sky
+- Add day-night cycle
+- Add interactive clouds
+- Add low poly mode
+- Add .obj export
+- Add other formats export
+- Add save settings
+- Separate generator and renderer
+- Add texture atlas
+- Add interactive path editor
+- Add procedurally generated buildings
+- Add custom road editor
+- Add custom Textures
+- Add custom obj files
+- Add dynamically changing environment
+- Add planet generation
+---------------------------(Optional)--------------------------------
+- Add multithreading
+- Add ray tracing
+- Add video export
+- Add skeleton animation

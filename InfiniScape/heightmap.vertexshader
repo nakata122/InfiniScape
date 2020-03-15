@@ -3,12 +3,14 @@
 
 // Input vertex data, different for all executions of this shader.
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 vertexUV;
+layout(location = 1) in vec3 normal;
+layout(location = 2) in vec2 vertexUV;
 
 uniform mat4 MVP;
 
 out vec2 UV;
-out float height;
+out vec3 pos;
+out vec3 normals;
 
 void main(){
 
@@ -16,5 +18,6 @@ void main(){
 	gl_PointSize = 5.0;
 
 	UV = vertexUV;
-	height = position.y;
+	pos = position;
+	normals = normal;
 }

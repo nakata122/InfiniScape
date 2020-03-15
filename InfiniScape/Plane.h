@@ -3,20 +3,24 @@
 class Plane :
 	public GLObject
 {
-	float ***Gradient;
+	float *Gradient;
 public:
-	float frequency = 20;
-	float amplitude = 20;
+	float frequency = 0.05;
+	float amplitude = 1;
 	float persistence = 1;
 	int octaves = 1;
-	int subdivision = 4;
+	int seed = 0;
+	int subdivision = 256;
+	int noiseSize = 128;
+	float elevation = 1;
 
-	Plane(int subdivision);
+	Plane(int numTriangles);
 	float OctavePerlin(float x, float y, int octaves, float persistence);
-	float lerp(float a, float b, float p);
-	float dotGridGradient(int ix, int iy, float x, float y);
+	float lerp(float a, float b, float t);
 	float perlin(float x, float y);
+	void calculateHeight(int i, int j, int vIndex);
 	void updateVertices();
+	void vertexThread();
 	void generateNew();
 };
 

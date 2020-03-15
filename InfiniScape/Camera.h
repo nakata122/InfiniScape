@@ -13,13 +13,13 @@ class Camera
 	glm::mat4 Projection;
 	glm::mat4 View;
 
-	glm::vec3 position = glm::vec3(0, 0, 5);
-	float horizontalAngle = 3.14f;
-	float verticalAngle = 0.0f;
+	glm::vec3 position = glm::vec3(-8, 50, -8);
+	float horizontalAngle = 264.662f;
+	float verticalAngle = -57.044f;
 	float initialFoV = 45.0f;
 
 	float speed = 30.0f; 
-	float mouseSpeed = 0.001f;
+	float mouseSpeed = 0.002f;
 
 	double lastXpos=1;
 	double lastYpos=1;

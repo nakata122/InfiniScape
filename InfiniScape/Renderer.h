@@ -14,14 +14,16 @@ class Renderer
 
 	GLObject *objects[10];
 	int objectCount;
+	bool change;
 	void initWindow();
 	void initGUI();
 public:
 	Renderer();
 	void render();
-	void renderGUI(float *frequency, float *amplitude, float *persistence, int *octaves);
+	void renderGUI(float *frequency, float *amplitude, float *persistence, int *octaves, int *subdivision, float *elevation);
 	void addProgram(Program *p);
 	void addObject(GLObject *obj);
+	bool isChanged();
 	bool isClosed();
 };
 

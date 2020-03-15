@@ -129,7 +129,7 @@ void Renderer::render()
 	glfwPollEvents();
 }
 
-void Renderer::renderGUI(float *frequency, float *amplitude, float *persistence, int *octaves)
+void Renderer::renderGUI(float *frequency, float *amplitude, float *persistence, int *octaves, int *subdivision, float *elevation)
 {
 
 	glfwMakeContextCurrent(gui);
@@ -140,16 +140,19 @@ void Renderer::renderGUI(float *frequency, float *amplitude, float *persistence,
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
+	change = false;
 	{
 
 		ImGui::Begin("Editor!");
 
 		static int counter = 0;
 
-		ImGui::SliderFloat("Frequency", frequency, 1, 100);
-		ImGui::SliderFloat("Amplitude", amplitude, 1, 100);
-		ImGui::SliderFloat("Persistence", persistence, 0, 1);
-		ImGui::SliderInt("Octaves", octaves, 1, 10);
+		if (ImGui::SliderInt("Subdivision", subdivision, 1, 100)) change = true;
+		if (ImGui::SliderFloat("Elevation", elevation, 1, 5)) change = true;
+		if (ImGui::SliderFloat("Frequency", frequency, 0, 1)) change = true;
+		if (ImGui::SliderFloat("Amplitude", amplitude, 1, 1000)) change = true;
+		if (ImGui::SliderFloat("Persistence", persistence, 0, 1)) change = true;
+		if (ImGui::SliderInt("Octaves", octaves, 1, 10)) change = true;
 
 
 		if (ImGui::Button("Button"))
@@ -183,6 +186,11 @@ void Renderer::addObject(GLObject *obj)
 void Renderer::addProgram(Program *p)
 {
 	programs[programCount++] = p;
+}
+
+bool Renderer::isChanged()
+{
+	return change;
 }
 
 bool Renderer::isClosed()

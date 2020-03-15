@@ -4,13 +4,27 @@
 out vec4 color;
 
 in vec2 UV;
-in float height;
+in vec3 pos;
+in vec3 normals;
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D Grass;
 uniform sampler2D Snow;
 
+vec4 mixTextures(vec2 mUV)
+{
+	return mix(texture(Grass, mUV), texture(Snow, mUV), max(0.01, normalize(pos).y));
+}
+
 void main(){
-	
-	color = mix(texture(Grass, UV)*0.5, texture(Snow, UV), max(0.01, (height/10)));
+	float repeat = 5.0;
+
+	vec3 scaledPos = pos/repeat;
+	vec3 blending = abs(normals);
+	blending /= (blending.x + blending.y + blending.z);
+	vec4 xProjection = mixTextures(vec2(scaledPos.y, scaledPos.z)) * blending.x;
+	vec4 yProjection = mixTextures(vec2(scaledPos.x, scaledPos.z)) * blending.y;
+	vec4 zProjection = mixTextures(vec2(scaledPos.x, scaledPos.y)) * blending.z;
+
+	color = xProjection + yProjection + zProjection;
 }

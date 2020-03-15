@@ -1,9 +1,8 @@
 #include "Camera.h"
 
-
 Camera::Camera()
 {
-	Projection = glm::perspective(glm::radians(initialFoV), 4.0f / 3.0f, 0.1f, 1000.0f);
+	Projection = glm::perspective(glm::radians(initialFoV), 4.0f / 3.0f, 0.1f, 300.0f);
 
 	// Camera matrix
 	View = glm::lookAt(
@@ -27,8 +26,6 @@ void Camera::computeMatrices(GLFWwindow* window)
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
 
-	// Reset mouse position for next frame
-	//glfwSetCursorPos(window, 1024 / 2, 768 / 2);
 
 	//Change direction
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
@@ -78,7 +75,7 @@ void Camera::computeMatrices(GLFWwindow* window)
 	float FoV = initialFoV;
 
 	// Projection matrix 
-	Projection = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 1000.0f);
+	Projection = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 300.0f);
 	// Camera matrix
 	View = glm::lookAt(
 		position,           

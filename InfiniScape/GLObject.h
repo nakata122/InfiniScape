@@ -39,6 +39,7 @@ public:
 
 	void setMVP(glm::mat4 Projection, glm::mat4 View);
 	glm::mat4 getMVP();
+	glm::mat4 getModel();
 	GLuint getProgramID();
 	GLuint getTexture(int index);
 	void addTexture(GLuint texture);

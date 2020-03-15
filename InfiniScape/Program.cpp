@@ -20,7 +20,7 @@ Program::Program()
 
 }
 
-void Program::bindProgram(GLObject &obj)
+void Program::bindProgram(GLObject &obj, Camera &camera)
 {
 	glUseProgram(programID);
 }

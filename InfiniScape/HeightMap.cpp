@@ -10,15 +10,19 @@ HeightMap::HeightMap()
 	LoadShaders("heightmap.vertexshader", "heightmap.fragmentshader");
 
 	MatrixID = glGetUniformLocation(programID, "MVP");
+	ModelID = glGetUniformLocation(programID, "M");
+	ViewID = glGetUniformLocation(programID, "V");
 	Texture1ID = glGetUniformLocation(programID, "Grass");
 	Texture2ID = glGetUniformLocation(programID, "Snow");
 }
 
-void HeightMap::bindProgram(GLObject &obj)
+void HeightMap::bindProgram(GLObject &obj, Camera &camera)
 {
 	glUseProgram(programID);
 
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &(obj.getMVP())[0][0]);
+	glUniformMatrix4fv(ModelID, 1, GL_FALSE, &(obj.getModel())[0][0]);
+	glUniformMatrix4fv(ViewID, 1, GL_FALSE, &camera.getView()[0][0]);
 
 
 	// Bind our texture in Texture Unit 0

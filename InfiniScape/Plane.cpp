@@ -12,12 +12,12 @@
 
 #include "Plane.h"
 
-float Plane::lerp(float a, float b, float t)
+float lerp(float a, float b, float t)
 {
 	return a * (1 - t) + b * t;
 }
 
-float smoothstep(const float &t) { return t * t * (3 - 2 * t); }
+float Plane::smoothstep(const float &t) { return t*t*(3.0 - 2.0*t); }
 
 // Compute Perlin noise at coordinates x, y
 float Plane::perlin(float x, float y) {
@@ -126,7 +126,7 @@ Plane::Plane(int numTriangles)
 
 void Plane::calculateHeight(int i, int j, int vIndex)
 {
-	float height = pow(OctavePerlin((float)i / 2, (float)j / 2, octaves, persistence), elevation) * amplitude;
+	float height = pow(OctavePerlin((float)i, (float)j, octaves, persistence), elevation) * amplitude;
 	if (height < 2) height = 0;
 	vertices[vIndex] = glm::vec3((float)i / 2, height, (float)j / 2);
 }

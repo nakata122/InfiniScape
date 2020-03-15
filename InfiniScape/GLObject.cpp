@@ -75,6 +75,11 @@ glm::mat4 GLObject::getMVP()
 	return MVP;
 }
 
+glm::mat4 GLObject::getModel()
+{
+	return Model;
+}
+
 void GLObject::generateBuffers()
 {
 	glGenBuffers(1, &vertexbuffer);

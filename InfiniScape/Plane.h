@@ -16,7 +16,7 @@ public:
 
 	Plane(int numTriangles);
 	float OctavePerlin(float x, float y, int octaves, float persistence);
-	float lerp(float a, float b, float t);
+	float smoothstep(const float &t);
 	float perlin(float x, float y);
 	void calculateHeight(int i, int j, int vIndex);
 	void updateVertices();

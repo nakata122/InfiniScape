@@ -119,7 +119,7 @@ void Renderer::render()
 	for (int i = 0; i < objectCount; i++)
 	{
 		objects[i]->setMVP(camera.getProjection(), camera.getView());
-		programs[0]->bindProgram(*objects[i]);
+		programs[0]->bindProgram(*objects[i], camera);
 
 		objects[i]->draw();
 	}

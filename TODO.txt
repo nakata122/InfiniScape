@@ -1,12 +1,12 @@
 - Make window resizable
 ✓ Add multithreading
-- Add infinite map generation
+✓ Add infinite map generation
 - Add procedural texture generation
 - Add height map editor
 - Add dynamic chunk division
 - Add dynamic chunk generation
 - Add mesh tesselation
-- Add lightning
+✓ Add lightning
 - Add custom hills and valleys
 - Add water
 - Add water physics

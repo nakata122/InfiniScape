@@ -1,26 +1,23 @@
 #pragma once
 #include "GLObject.h"
+#include "Noise.h"
 class Plane :
 	public GLObject
 {
-	float *Gradient;
+	GLfloat *pixels;
+	GLuint heightmapID;
 public:
-	float frequency = 0.05;
-	float amplitude = 1;
-	float persistence = 1;
-	int octaves = 1;
-	int seed = 0;
-	int subdivision = 256;
-	int noiseSize = 128;
-	float elevation = 1;
+	int subdivision = 128;
+	float offsetX, offsetY;
+	Noise noise;
+
 
 	Plane(int numTriangles);
-	float OctavePerlin(float x, float y, int octaves, float persistence);
-	float smoothstep(const float &t);
-	float perlin(float x, float y);
+	~Plane();
 	void calculateHeight(int i, int j, int vIndex);
 	void updateVertices();
-	void vertexThread();
-	void generateNew();
+	void vertexThread(int startS);
+	void pixelThread(int startS);
+	void updateHeightMap();
 };
 

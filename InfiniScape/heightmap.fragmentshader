@@ -16,11 +16,11 @@ uniform sampler2D Snow;
 
 vec4 mixTextures(vec2 mUV)
 {
-	return mix(texture(Grass, mUV), texture(Snow, mUV), max(0.01, normalize(pos).y));
+	return mix(texture(Grass, mUV), texture(Snow, mUV), max(0.01, pos.y/10));
 }
 
 void main(){
-	float repeat = 5.0;
+	float repeat = 10.0;
 
 	//Trilinear filtering
 	vec3 scaledPos = pos/repeat;

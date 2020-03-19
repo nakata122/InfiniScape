@@ -8,6 +8,8 @@
 // Include GLEW
 #include <GL/glew.h>
 
+#include "Camera.h"
+
 class GLObject
 {
 	GLuint vertexbuffer;
@@ -16,19 +18,20 @@ class GLObject
 	GLuint uvbuffer;
 
 	GLuint programID = 0;
-	GLuint textureID[10];
-	int texCount = 0;
-	glm::mat4 MVP;
+	std::vector<GLuint> textureID;
 
 protected:
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> texCoords;
 	std::vector<unsigned short> indices;
+	Camera *currentCamera;
 	glm::mat4 Model;
+	glm::mat4 MVP;
 	int numTriangles;
 
 public:
+
 	GLObject();
 
 	~GLObject();
@@ -37,11 +40,11 @@ public:
 	void generateBuffers();
 	void updatePositionBuffers();
 
-	void setMVP(glm::mat4 Projection, glm::mat4 View);
+	void setMVP(Camera &camera);
 	glm::mat4 getMVP();
 	glm::mat4 getModel();
 	GLuint getProgramID();
-	GLuint getTexture(int index);
+	std::vector<GLuint> &getTextures();
 	void addTexture(GLuint texture);
 };
 

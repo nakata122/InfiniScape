@@ -13,7 +13,6 @@ class Camera
 	glm::mat4 Projection;
 	glm::mat4 View;
 
-	glm::vec3 position = glm::vec3(-8, 50, -8);
 	float horizontalAngle = 264.662f;
 	float verticalAngle = -57.044f;
 	float initialFoV = 45.0f;
@@ -25,6 +24,8 @@ class Camera
 	double lastYpos=1;
 
 public:
+	glm::vec3 position = glm::vec3(-8, 50, -8);
+
 	Camera();
 
 	void computeMatrices(GLFWwindow* window);

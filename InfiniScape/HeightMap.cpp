@@ -12,8 +12,9 @@ HeightMap::HeightMap()
 	MatrixID = glGetUniformLocation(programID, "MVP");
 	ModelID = glGetUniformLocation(programID, "M");
 	ViewID = glGetUniformLocation(programID, "V");
-	Texture1ID = glGetUniformLocation(programID, "Grass");
-	Texture2ID = glGetUniformLocation(programID, "Snow");
+	//TextureID[0] = glGetUniformLocation(programID, "Height");
+	TextureID[0] = glGetUniformLocation(programID, "Grass");
+	TextureID[1] = glGetUniformLocation(programID, "Snow");
 }
 
 void HeightMap::bindProgram(GLObject &obj, Camera &camera)
@@ -24,17 +25,10 @@ void HeightMap::bindProgram(GLObject &obj, Camera &camera)
 	glUniformMatrix4fv(ModelID, 1, GL_FALSE, &(obj.getModel())[0][0]);
 	glUniformMatrix4fv(ViewID, 1, GL_FALSE, &camera.getView()[0][0]);
 
-
-	// Bind our texture in Texture Unit 0
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, obj.getTexture(0));
-	// Set our "myTextureSampler" sampler to use Texture Unit 0
-	glUniform1i(Texture1ID, 0);
-
-
-	// Bind our texture in Texture Unit 1
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, obj.getTexture(1));
-	// Set our "myTextureSampler" sampler to use Texture Unit 0
-	glUniform1i(Texture2ID, 1);
+	for (int i = 0; i < obj.getTextures().size(); i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, obj.getTextures()[i]);
+		glUniform1i(TextureID[i], i);
+	}
 }

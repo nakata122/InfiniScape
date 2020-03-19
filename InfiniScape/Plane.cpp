@@ -3,74 +3,19 @@
 #include <iostream>
 #include <thread>
 #include <vector>
-#include <time.h>
-#include <cmath>
-
-// Include GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "Plane.h"
-
-float lerp(float a, float b, float t)
-{
-	return a * (1 - t) + b * t;
-}
-
-float Plane::smoothstep(const float &t) { return t*t*(3.0 - 2.0*t); }
-
-// Compute Perlin noise at coordinates x, y
-float Plane::perlin(float x, float y) {
-	int size = noiseSize - 1;
-
-	// Determine grid cell coordinates
-	int x0 = (int)floor(x) & size;
-	int x1 = (x0 + 1) & size;
-	int y0 = (int)floor(y) & size;
-	int y1 = (y0 + 1) & size;
-
-	// Determine interpolation weights
-	float sx = smoothstep(x - floor(x));
-	float sy = smoothstep(y - floor(y));
-
-	// Bilinear interpolation
-	float n0, n1, ix0, ix1, value;
-
-	n0 = Gradient[y0 * size + x0];
-	n1 = Gradient[y0 * size + x1];
-	ix0 = lerp(n0, n1, sx);
-
-	n0 = Gradient[y1 * size + x0];
-	n1 = Gradient[y1 * size + x1];
-	ix1 = lerp(n0, n1, sx);
-
-	value = lerp(ix0, ix1, sy);
-	return value;
-}
-
-float Plane::OctavePerlin(float x, float y, int octaves, float persistence) {
-	float total = 0;
-	float frequency = this->frequency;
-	float amplitude = 1;
-	float maxValue = 0;  // Used for normalizing result to 0.0 - 1.0
-	for (int i = 0; i < octaves; i++) {
-		total += perlin(x * frequency, y * frequency) * amplitude;
-
-		maxValue += amplitude;
-
-		amplitude *= persistence;
-		frequency *= 1.5;
-	}
-
-	return total / maxValue;
-}
+#include "texture.h"
 
 
 Plane::Plane(int numTriangles)
 {
+
 	this->numTriangles = subdivision * subdivision;
 
-	generateNew();
+	pixels = new GLfloat[numTriangles];
+	//glGenTextures(1, &heightmapID);
+	//addTexture(heightmapID);
 
 	vertices.resize(numTriangles);
 	int minS = subdivision;
@@ -85,8 +30,8 @@ Plane::Plane(int numTriangles)
 		{
 			calculateHeight(i, j, vertI);
 
-			float xCoord = (float)(j + 1.01) / (float)(minS);
-			float yCoord = (float)(i + 1.01) / (float)(minS);
+			float xCoord = (float)(j + 1) / (float)(minS);
+			float yCoord = (float)(i + 1) / (float)(minS);
 			texCoords[vertI] = glm::vec2(xCoord, yCoord);
 
 			vertI++;
@@ -106,8 +51,8 @@ Plane::Plane(int numTriangles)
 			indices[tempI + 2] = vertI + minS + 1;
 
 			indices[tempI + 3] = vertI;
-			indices[tempI + 4] = vertI + minS;
-			indices[tempI + 5] = vertI + minS + 1;
+			indices[tempI + 4] = vertI + minS + 1;
+			indices[tempI + 5] = vertI + minS;
 
 
 			glm::vec3 d1 = vertices[vertI + 1] - vertices[vertI];
@@ -121,80 +66,104 @@ Plane::Plane(int numTriangles)
 	}
 
 
+	std::thread ahalf(&Plane::pixelThread, this, 0);
+
+	std::thread bhalf(&Plane::pixelThread, this, minS / 4);
+
+	std::thread chalf(&Plane::pixelThread, this, minS / 2);
+
+	std::thread dhalf(&Plane::pixelThread, this, minS * 3 / 4);
+
+	ahalf.join();
+	bhalf.join();
+	chalf.join();
+	dhalf.join();
+
 	generateBuffers();
 }
 
 void Plane::calculateHeight(int i, int j, int vIndex)
 {
-	float height = pow(OctavePerlin((float)i, (float)j, octaves, persistence), elevation) * amplitude;
+	float height = noise.AdvancedPerlin((float)i + offsetX, (float)j + offsetY);
 	if (height < 2) height = 0;
-	vertices[vIndex] = glm::vec3((float)i / 2, height, (float)j / 2);
+	//float height = noise.getHeight((float)i / 2, (float)j / 2);
+	vertices[vIndex] = glm::vec3((float)i, height, (float)j);
 }
 
 void Plane::updateVertices()
 {
-	int minS = subdivision;
-
-	std::thread uhalf(&Plane::vertexThread, this);
-
-	int vertI = 0;
-	for (int i = 0; i < minS - 1; i++)
+	if (currentCamera != nullptr)
 	{
-		for (int j = 0; j < minS - 1; j++)
-		{
-
-			glm::vec3 d1 = vertices[vertI + 1] - vertices[vertI];
-			glm::vec3 d2 = vertices[vertI + minS + 1] - vertices[vertI];
-			normals[vertI] = normalize(cross(d1, d2));
-
-			vertI++;
-		}
-		vertI++;
+		offsetX = currentCamera->position.x;
+		offsetY = currentCamera->position.z;
 	}
+
+	std::thread uhalf(&Plane::vertexThread, this, 0);
+
 	uhalf.join();
 
 	updatePositionBuffers();
 }
 
-void Plane::vertexThread()
+void Plane::vertexThread(int startS)
 {
 	int minS = subdivision;
 
-	int vertI = 0;
+	int vertI = startS * minS;
+
 	for (int i = 0; i < minS; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			float height = noise.AdvancedPerlin(startS * minS + minS * j, (float)i);
+			vertices[vertI + minS*j] = glm::vec3(startS * minS + minS * j, height, (float)i);
+		}
+
+		vertI++;
+	}
+}
+
+void Plane::updateHeightMap()
+{
+	int minS = subdivision;
+
+	if (currentCamera != nullptr)
+	{
+		offsetX = currentCamera->position.x;
+		offsetY = currentCamera->position.z;
+	}
+	
+	std::thread ahalf(&Plane::pixelThread, this, 0);
+
+	std::thread bhalf(&Plane::pixelThread, this, minS / 4);
+
+	std::thread chalf(&Plane::pixelThread, this, minS / 2);
+
+	std::thread dhalf(&Plane::pixelThread, this, minS * 3 / 4);
+
+	ahalf.join();
+	bhalf.join();
+	chalf.join();
+	dhalf.join();
+	
+	loadData_custom(minS, heightmapID, pixels);
+}
+
+void Plane::pixelThread(int startS)
+{
+	int minS = subdivision;
+
+	for (int i = startS; i <  startS + minS/4; i++)
 	{
 		for (int j = 0; j < minS; j++)
 		{
-			calculateHeight(i, j, vertI);
-
-			vertI++;
+			pixels[i*minS + j] = noise.AdvancedPerlin(i + offsetX, j + offsetY);
 		}
 	}
 }
 
-void Plane::generateNew()
+
+Plane::~Plane()
 {
-	//if (Gradient != nullptr) delete[] Gradient;
-	srand(seed);
-	Gradient = new float[noiseSize * noiseSize];
-	for (int i = 0; i < noiseSize; i++)
-	{
-		for (int j = 0; j < noiseSize; j++)
-		{
-			Gradient[i*noiseSize + j] = (float)(rand() % 100)/100;
-		}
-	}
-
-
-	/*Gradient = new float**[noiseSize];
-	for (int i = 0; i < noiseSize; i++)
-	{
-		Gradient[i] = new float*[noiseSize];
-		for (int j = 0; j < noiseSize; j++)
-		{
-			Gradient[i][j] = new float[2];
-			Gradient[i][j][0] = rand() % 100;
-			Gradient[i][j][1] = rand() % 100;
-		}
-	}*/
+	delete[] pixels;
 }

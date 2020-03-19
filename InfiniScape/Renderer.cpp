@@ -45,6 +45,8 @@ Renderer::Renderer()
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
+	///glEnable(GL_CULL_FACE);
+
 }
 
 void Renderer::initWindow()
@@ -118,7 +120,7 @@ void Renderer::render()
 
 	for (int i = 0; i < objectCount; i++)
 	{
-		objects[i]->setMVP(camera.getProjection(), camera.getView());
+		objects[i]->setMVP(camera);
 		programs[0]->bindProgram(*objects[i], camera);
 
 		objects[i]->draw();
@@ -129,7 +131,7 @@ void Renderer::render()
 	glfwPollEvents();
 }
 
-void Renderer::renderGUI(float *frequency, float *amplitude, float *persistence, int *octaves, int *subdivision, float *elevation)
+void Renderer::renderGUI(int *subdivision, Noise &noise)
 {
 
 	glfwMakeContextCurrent(gui);
@@ -148,11 +150,11 @@ void Renderer::renderGUI(float *frequency, float *amplitude, float *persistence,
 		static int counter = 0;
 
 		if (ImGui::SliderInt("Subdivision", subdivision, 1, 100)) change = true;
-		if (ImGui::SliderFloat("Elevation", elevation, 1, 5)) change = true;
-		if (ImGui::SliderFloat("Frequency", frequency, 0, 1)) change = true;
-		if (ImGui::SliderFloat("Amplitude", amplitude, 1, 1000)) change = true;
-		if (ImGui::SliderFloat("Persistence", persistence, 0, 1)) change = true;
-		if (ImGui::SliderInt("Octaves", octaves, 1, 10)) change = true;
+		if (ImGui::SliderFloat("Elevation", &noise.elevation, 1, 5)) change = true;
+		if (ImGui::SliderFloat("Frequency", &noise.frequency, 0, 1)) change = true;
+		if (ImGui::SliderFloat("Amplitude", &noise.amplitude, 1, 100)) change = true;
+		if (ImGui::SliderFloat("Persistence", &noise.persistence, 0, 1)) change = true;
+		if (ImGui::SliderInt("Octaves", &noise.octaves, 1, 10)) change = true;
 
 
 		if (ImGui::Button("Button"))

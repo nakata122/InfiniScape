@@ -2,6 +2,7 @@
 
 #include "Program.h"
 #include "GLObject.h"
+#include "Noise.h"
 #include "Camera.h"
 class Renderer
 {
@@ -20,7 +21,7 @@ class Renderer
 public:
 	Renderer();
 	void render();
-	void renderGUI(float *frequency, float *amplitude, float *persistence, int *octaves, int *subdivision, float *elevation);
+	void renderGUI(int *subdivision, Noise &noise);
 	void addProgram(Program *p);
 	void addObject(GLObject *obj);
 	bool isChanged();

@@ -65,9 +65,10 @@ GLuint GLObject::getProgramID()
 	return programID;
 }
 
-void GLObject::setMVP(glm::mat4 Projection, glm::mat4 View)
+void GLObject::setMVP(Camera &camera)
 {
-	MVP = Projection * View * Model;
+	currentCamera = &camera;
+	MVP = camera.getProjection() * camera.getView() * Model;
 }
 
 glm::mat4 GLObject::getMVP()
@@ -102,22 +103,22 @@ void GLObject::generateBuffers()
 void GLObject::updatePositionBuffers()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), NULL, GL_STREAM_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(glm::vec3), vertices.data());
+	//glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), NULL, GL_STREAM_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 256 * sizeof(glm::vec3), vertices.data());
 
-	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), NULL, GL_STREAM_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, normals.size() * sizeof(glm::vec3), normals.data());
+	//glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+	//glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), NULL, GL_STREAM_DRAW);
+	//glBufferSubData(GL_ARRAY_BUFFER, 0, normals.size() * sizeof(glm::vec3), normals.data());
 }
 
 void GLObject::addTexture(GLuint texture)
 {
-	textureID[texCount++] = texture;
+	textureID.push_back(texture);
 }
 
-GLuint GLObject::getTexture(int index)
+std::vector<GLuint> &GLObject::getTextures()
 {
-	return textureID[index];
+	return textureID;
 }
 
 GLObject::~GLObject()

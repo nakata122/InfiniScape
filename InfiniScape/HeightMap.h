@@ -8,8 +8,7 @@ class HeightMap :
 	GLuint MatrixID;
 	GLuint ModelID;
 	GLuint ViewID;
-	GLuint Texture1ID;
-	GLuint Texture2ID;
+	GLuint TextureID[3];
 public:
 	HeightMap();
 	void bindProgram(GLObject &obj, Camera &camera);

@@ -17,6 +17,7 @@ public:
 	void calculateHeight(int i, int j, int vIndex);
 	void updateVertices();
 	void vertexThread(int startS);
+	void indexThread(int startS);
 	void pixelThread(int startS);
 	void updateHeightMap();
 };

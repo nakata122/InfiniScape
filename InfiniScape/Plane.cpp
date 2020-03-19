@@ -100,7 +100,7 @@ void Plane::updateVertices()
 
 	std::thread uhalf(&Plane::vertexThread, this, 0);
 
-	uhalf.join();
+	uhalf.join(); 
 
 	updatePositionBuffers();
 }
@@ -109,17 +109,45 @@ void Plane::vertexThread(int startS)
 {
 	int minS = subdivision;
 
-	int vertI = startS * minS;
+	int vertI = startS, tempI = 0;
 
 	for (int i = 0; i < minS; i++)
 	{
-		for (int j = 0; j < 2; j++)
-		{
-			float height = noise.AdvancedPerlin(startS * minS + minS * j, (float)i);
-			vertices[vertI + minS*j] = glm::vec3(startS * minS + minS * j, height, (float)i);
+		float height = noise.AdvancedPerlin(startS + minS + 1, (float)i);
+		vertices[vertI] = glm::vec3(startS + minS + 1, height, (float)i);
+
+		if (i < minS - 1) {
+			indices[tempI] = vertI;
+			indices[tempI + 1] = vertI + 1;
+			indices[tempI + 2] = vertI + minS * (minS - 1) + 1;
+
+			indices[tempI + 3] = vertI;
+			indices[tempI + 4] = vertI + minS * (minS - 1) + 1;
+			indices[tempI + 5] = vertI + minS * (minS - 1);
 		}
 
 		vertI++;
+		tempI += 6;
+	}
+}
+
+void Plane::indexThread(int startS)
+{
+	int minS = subdivision;
+
+	int vertI = startS, tempI = 0;
+	for (int i = 0; i < minS - 1; i++)
+	{
+		indices[tempI] = vertI;
+		indices[tempI + 1] = vertI + 1;
+		indices[tempI + 2] = vertI + minS * (minS - 1) + 1;
+
+		indices[tempI + 3] = vertI;
+		indices[tempI + 4] = vertI + minS * (minS - 1) + 1;
+		indices[tempI + 5] = vertI + minS * (minS - 1);
+
+		vertI++;
+		tempI += 6;
 	}
 }
 

@@ -34,7 +34,6 @@ Renderer::Renderer()
 	initGUI();
 	glfwMakeContextCurrent(window);
 
-	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
@@ -45,7 +44,7 @@ Renderer::Renderer()
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
-	///glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 }
 
@@ -123,7 +122,9 @@ void Renderer::render()
 		objects[i]->setMVP(camera);
 		programs[0]->bindProgram(*objects[i], camera);
 
+		glBindVertexArray(VertexArrayID);
 		objects[i]->draw();
+		glBindVertexArray(0);
 	}
 
 	// Swap buffers

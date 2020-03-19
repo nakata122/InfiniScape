@@ -14,6 +14,7 @@ class Renderer
 	Camera camera;
 
 	GLObject *objects[10];
+	GLuint VertexArrayID;
 	int objectCount;
 	bool change;
 	void initWindow();

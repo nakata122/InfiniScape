@@ -8,12 +8,12 @@
 #include "texture.h"
 
 
-Plane::Plane(int numTriangles)
+Plane::Plane(int numTriangle)
 {
 
 	this->numTriangles = subdivision * subdivision;
 
-	pixels = new GLfloat[numTriangles];
+	//pixels = new GLfloat[numTriangles];
 	//glGenTextures(1, &heightmapID);
 	//addTexture(heightmapID);
 
@@ -65,7 +65,7 @@ Plane::Plane(int numTriangles)
 		vertI++;
 	}
 
-
+	/*
 	std::thread ahalf(&Plane::pixelThread, this, 0);
 
 	std::thread bhalf(&Plane::pixelThread, this, minS / 4);
@@ -77,7 +77,7 @@ Plane::Plane(int numTriangles)
 	ahalf.join();
 	bhalf.join();
 	chalf.join();
-	dhalf.join();
+	dhalf.join();*/
 
 	generateBuffers();
 }
@@ -98,37 +98,52 @@ void Plane::updateVertices()
 		offsetY = currentCamera->position.z;
 	}
 
-	std::thread uhalf(&Plane::vertexThread, this, 0);
 
-	uhalf.join(); 
+	int minS = subdivision;
+	int vertI = 0;
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	// get pointer
+	glm::vec3 *ptr = (glm::vec3*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
-	updatePositionBuffers();
+	for (int i = 0; i < minS; i++)
+	{
+		for (int j = 0; j < minS; j++)
+		{
+			float height = noise.AdvancedPerlin(i, j);
+			ptr[vertI] = glm::vec3(i, height, j);
+
+			vertI++;
+		}
+	}
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+
+	//std::thread uhalf(&Plane::vertexThread, this, 0);
+	//uhalf.detach(); 
+
+	//updatePositionBuffers(0);
 }
 
 void Plane::vertexThread(int startS)
 {
 	int minS = subdivision;
 
-	int vertI = startS, tempI = 0;
+	int vertI = 0;
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	// get pointer
+	glm::vec3 *ptr = (glm::vec3*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
 	for (int i = 0; i < minS; i++)
 	{
-		float height = noise.AdvancedPerlin(startS + minS + 1, (float)i);
-		vertices[vertI] = glm::vec3(startS + minS + 1, height, (float)i);
+		for (int j = 0; j < minS; j++)
+		{
+			float height = noise.AdvancedPerlin(i, j);
+			ptr[vertI] = glm::vec3(i, height, j);
 
-		if (i < minS - 1) {
-			indices[tempI] = vertI;
-			indices[tempI + 1] = vertI + 1;
-			indices[tempI + 2] = vertI + minS * (minS - 1) + 1;
-
-			indices[tempI + 3] = vertI;
-			indices[tempI + 4] = vertI + minS * (minS - 1) + 1;
-			indices[tempI + 5] = vertI + minS * (minS - 1);
+			vertI++;
 		}
-
-		vertI++;
-		tempI += 6;
 	}
+	glUnmapBuffer(GL_ARRAY_BUFFER);
 }
 
 void Plane::indexThread(int startS)

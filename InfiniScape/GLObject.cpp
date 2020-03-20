@@ -11,6 +11,7 @@ GLObject::GLObject()
 void GLObject::draw()
 {
 
+	glBindVertexArray(VertexArrayID);
 
 	glDrawElements(
 		GL_TRIANGLES,      // mode
@@ -19,7 +20,7 @@ void GLObject::draw()
 		(void*)0           // element array buffer offset
 	);
 	//glDrawArrays(GL_POINTS, 0, vertices.size());
-
+	glBindVertexArray(0);
 }
 
 GLuint GLObject::getProgramID()
@@ -45,6 +46,9 @@ glm::mat4 GLObject::getModel()
 
 void GLObject::generateBuffers()
 {
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
+
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STREAM_DRAW);
@@ -103,14 +107,11 @@ void GLObject::generateBuffers()
 	glDisableVertexAttribArray(2);
 }
 
-void GLObject::updatePositionBuffers()
+void GLObject::updatePositionBuffers(int startS)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	//glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), NULL, GL_STREAM_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 128 * sizeof(glm::vec3), vertices.data());
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, 127 * 6 * sizeof(unsigned short), &indices[0]);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), NULL, GL_STREAM_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(glm::vec3), &vertices[0]);
 
 	//glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
 	//glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), NULL, GL_STREAM_DRAW);

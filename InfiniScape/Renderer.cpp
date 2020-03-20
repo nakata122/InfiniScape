@@ -34,8 +34,6 @@ Renderer::Renderer()
 	initGUI();
 	glfwMakeContextCurrent(window);
 
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
@@ -122,9 +120,7 @@ void Renderer::render()
 		objects[i]->setMVP(camera);
 		programs[0]->bindProgram(*objects[i], camera);
 
-		glBindVertexArray(VertexArrayID);
 		objects[i]->draw();
-		glBindVertexArray(0);
 	}
 
 	// Swap buffers

@@ -12,7 +12,7 @@
 
 class GLObject
 {
-	GLuint vertexbuffer;
+	GLuint VertexArrayID;
 	GLuint normalbuffer;
 	GLuint indexbuffer;
 	GLuint uvbuffer;
@@ -21,6 +21,7 @@ class GLObject
 	std::vector<GLuint> textureID;
 
 protected:
+	GLuint vertexbuffer;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> texCoords;
@@ -38,7 +39,7 @@ public:
 
 	virtual void draw();
 	void generateBuffers();
-	void updatePositionBuffers();
+	void updatePositionBuffers(int startS);
 
 	void setMVP(Camera &camera);
 	glm::mat4 getMVP();

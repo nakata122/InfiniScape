@@ -16,10 +16,10 @@ class Noise
 	std::vector<Line> curve;
 public:
 	//Perlin noise parameters
-	int noiseSize = 128;
+	int noiseSize = 256;
 	float elevation = 1;
 	float frequency = 0.05;
-	float amplitude = 1;
+	float amplitude = 50;
 	float persistence = 1;
 	int octaves = 1;
 	int seed = 0;

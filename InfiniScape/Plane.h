@@ -7,8 +7,8 @@ class Plane :
 	GLfloat *pixels;
 	GLuint heightmapID;
 public:
-	int subdivision = 128;
-	float offsetX, offsetY;
+	int subdivision = 64;
+	float offsetX = 0, offsetY = 0;
 	Noise noise;
 
 

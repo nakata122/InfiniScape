@@ -6,7 +6,7 @@ Camera::Camera()
 
 	// Camera matrix
 	View = glm::lookAt(
-		glm::vec3(-8, 50, -8), // Camera is at (4,3,3), in World Space
+		glm::vec3(0, 50, 0), // Camera is at (4,3,3), in World Space
 		glm::vec3(100, 0, 100), // and looks at the origin
 		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 	);

@@ -24,7 +24,7 @@ class Camera
 	double lastYpos=1;
 
 public:
-	glm::vec3 position = glm::vec3(-8, 50, -8);
+	glm::vec3 position = glm::vec3(0, 50, 0);
 
 	Camera();
 

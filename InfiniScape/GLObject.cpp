@@ -16,7 +16,7 @@ void GLObject::draw()
 	glDrawElements(
 		GL_TRIANGLES,      // mode
 		indices.size(),    // count
-		GL_UNSIGNED_INT, // type
+		GL_UNSIGNED_INT,   // type
 		(void*)0           // element array buffer offset
 	);
 	//glDrawArrays(GL_POINTS, 0, vertices.size());

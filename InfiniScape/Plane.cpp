@@ -10,7 +10,7 @@
 
 float coords(float t)
 {
-	return t * t / 1000 + 0.5;
+	return abs(t) / 256 + 0.8;
 }
 
 Plane::Plane(int numTriangle)
@@ -34,6 +34,7 @@ Plane::Plane(int numTriangle)
 	{
 		for (float j = 0; j < minS; j++)
 		{
+			float inc = std::min(posX, posZ);
 			vertices[vertI] = glm::vec3(posX, 0.0, posZ);
 
 			float xCoord = (float)(j + 1) / (float)(minS);

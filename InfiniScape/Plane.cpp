@@ -2,20 +2,24 @@
 
 #include <iostream>
 #include <thread>
+#include <algorithm>
 #include <vector>
 
 #include "Plane.h"
 #include "texture.h"
 
+float coords(float t)
+{
+	return t * t / 1000 + 0.5;
+}
 
 Plane::Plane(int numTriangle)
 {
-
 	this->numTriangles = subdivision * subdivision;
 
-	//pixels = new GLfloat[numTriangles];
-	//glGenTextures(1, &heightmapID);
-	//addTexture(heightmapID);
+	pixels = new GLfloat[numTriangles];
+	glGenTextures(1, &heightmapID);
+	addTexture(heightmapID);
 
 	vertices.resize(numTriangles);
 	int minS = subdivision;
@@ -24,18 +28,27 @@ Plane::Plane(int numTriangle)
 	normals.resize(numTriangles);
 
 	int vertI = 0;
-	for (int i = 0; i < minS; i++)
+	float incX = 0.01, incZ = 0.01, posX = -256, posZ = -256;
+
+	for (float i = 0; i < minS; i++)
 	{
-		for (int j = 0; j < minS; j++)
+		for (float j = 0; j < minS; j++)
 		{
-			calculateHeight(i, j, vertI);
+			vertices[vertI] = glm::vec3(posX, 0.0, posZ);
 
 			float xCoord = (float)(j + 1) / (float)(minS);
 			float yCoord = (float)(i + 1) / (float)(minS);
 			texCoords[vertI] = glm::vec2(xCoord, yCoord);
 
 			vertI++;
+			posZ += coords(posZ);
+			//incZ += 0.01;
+
 		}
+		posX += coords(posX);
+		//incX += 0.01;
+		posZ = -256;
+		//incZ = 0;
 	}
 
 
@@ -65,7 +78,7 @@ Plane::Plane(int numTriangle)
 		vertI++;
 	}
 
-	/*
+	
 	std::thread ahalf(&Plane::pixelThread, this, 0);
 
 	std::thread bhalf(&Plane::pixelThread, this, minS / 4);
@@ -77,26 +90,22 @@ Plane::Plane(int numTriangle)
 	ahalf.join();
 	bhalf.join();
 	chalf.join();
-	dhalf.join();*/
+	dhalf.join();
 
+	loadData_custom(minS, heightmapID, pixels);
 	generateBuffers();
 }
 
 void Plane::calculateHeight(int i, int j, int vIndex)
 {
-	float height = noise.AdvancedPerlin((float)i + offsetX, (float)j + offsetY);
+	float height = noise.AdvancedPerlin((float)i / 4, (float)j / 4);
 	if (height < 2) height = 0;
 	//float height = noise.getHeight((float)i / 2, (float)j / 2);
-	vertices[vIndex] = glm::vec3((float)i, height, (float)j);
+	vertices[vIndex] = glm::vec3((float)i / 4, height, (float)j / 4);
 }
 
 void Plane::updateVertices()
 {
-	if (currentCamera != nullptr)
-	{
-		offsetX = currentCamera->position.x;
-		offsetY = currentCamera->position.z;
-	}
 
 
 	int minS = subdivision;
@@ -109,8 +118,8 @@ void Plane::updateVertices()
 	{
 		for (int j = 0; j < minS; j++)
 		{
-			float height = noise.AdvancedPerlin(i, j);
-			ptr[vertI] = glm::vec3(i, height, j);
+			float height = noise.AdvancedPerlin((float)i / 4, (float)j / 4);
+			ptr[vertI] = glm::vec3((float)i / 4, height, (float)j / 4);
 
 			vertI++;
 		}
@@ -169,12 +178,6 @@ void Plane::indexThread(int startS)
 void Plane::updateHeightMap()
 {
 	int minS = subdivision;
-
-	if (currentCamera != nullptr)
-	{
-		offsetX = currentCamera->position.x;
-		offsetY = currentCamera->position.z;
-	}
 	
 	std::thread ahalf(&Plane::pixelThread, this, 0);
 
@@ -200,11 +203,15 @@ void Plane::pixelThread(int startS)
 	{
 		for (int j = 0; j < minS; j++)
 		{
-			pixels[i*minS + j] = noise.AdvancedPerlin(i + offsetX, j + offsetY);
+			pixels[i*minS + j] = noise.AdvancedPerlin((float)i / 4, (float)j / 4);
 		}
 	}
 }
 
+void Plane::setMVP(const Camera &camera)
+{
+	MVP = camera.getProjection() * camera.getStaticView() * Model;
+}
 
 Plane::~Plane()
 {

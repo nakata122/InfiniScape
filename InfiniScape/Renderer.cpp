@@ -128,7 +128,7 @@ void Renderer::render()
 	glfwPollEvents();
 }
 
-void Renderer::renderGUI(int *subdivision, Noise &noise)
+void Renderer::renderGUI(int *subdivision, Noise &noise, bool *visibility)
 {
 
 	glfwMakeContextCurrent(gui);
@@ -146,7 +146,8 @@ void Renderer::renderGUI(int *subdivision, Noise &noise)
 
 		static int counter = 0;
 
-		if (ImGui::SliderInt("Subdivision", subdivision, 1, 100)) change = true;
+		ImGui::Checkbox("Stop gui", visibility);
+		//if (ImGui::SliderInt("Subdivision", subdivision, 1, 1000)) change = true;
 		if (ImGui::SliderFloat("Elevation", &noise.elevation, 1, 5)) change = true;
 		if (ImGui::SliderFloat("Frequency", &noise.frequency, 0, 1)) change = true;
 		if (ImGui::SliderFloat("Amplitude", &noise.amplitude, 1, 100)) change = true;

@@ -7,6 +7,7 @@ in vec2 UV;
 in vec3 pos;
 in vec3 normals;
 in float v_color;
+in vec2 offset;
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D Grass;
@@ -28,7 +29,7 @@ void main(){
 	//vec4 yProjection = mixTextures(vec2(scaledPos.x, scaledPos.z)) * blending.y;
 	//vec4 zProjection = mixTextures(vec2(scaledPos.x, scaledPos.y)) * blending.z;
 
-	vec4 final = mixTextures(vec2(scaledPos.x, scaledPos.z));
+	vec4 final = mixTextures(vec2(scaledPos.x + offset.x*25, scaledPos.z + offset.y*25));
 	
 	color = v_color * final;
 }

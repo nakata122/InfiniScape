@@ -5,7 +5,7 @@ Camera::Camera()
 	Projection = glm::perspective(glm::radians(initialFoV), 4.0f / 3.0f, 0.1f, 300.0f);
 
 	// Camera matrix
-	View = glm::lookAt(
+	View = staticView = glm::lookAt(
 		glm::vec3(0, 50, 0), // Camera is at (4,3,3), in World Space
 		glm::vec3(100, 0, 100), // and looks at the origin
 		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
@@ -83,17 +83,29 @@ void Camera::computeMatrices(GLFWwindow* window)
 		up                  
 	);
 
+	// Camera matrix
+	staticView = glm::lookAt(
+		glm::vec3(0, 50, 0),
+		glm::vec3(0, 50, 0) + direction,
+		up
+	);
+
 	lastTime = currentTime;
 	lastXpos = xpos;
 	lastYpos = ypos;
 }
 
-glm::mat4 Camera::getProjection()
+glm::mat4 Camera::getProjection() const
 {
 	return Projection;
 }
 
-glm::mat4 Camera::getView()
+glm::mat4 Camera::getView() const
 {
 	return View;
+}
+
+glm::mat4 Camera::getStaticView() const
+{
+	return staticView;
 }

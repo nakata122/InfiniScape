@@ -9,17 +9,19 @@ layout(location = 2) in vec2 vertexUV;
 uniform mat4 MVP;
 uniform mat4 V;
 uniform mat4 M;
-//uniform sampler2D Height;
+uniform sampler2D Height;
+uniform vec2 Offset;
 
 out vec2 UV;
 out vec3 pos;
 out vec3 normals;
+out vec2 offset;
 out float v_color;
 
 void main(){
+	vec3 real_pos = vec3(position.x, texture(Height, vec2(position.x/256 + Offset.x, position.z/256 + Offset.y)).r, position.z);
 
-    gl_Position = MVP * vec4(position, 1);
-	gl_PointSize = 5.0;
+    gl_Position = MVP * vec4(real_pos, 1);
 
 	UV = vertexUV;
 	normals = normal;
@@ -27,16 +29,16 @@ void main(){
 	vec3 u_LightPos = vec3(0, 50, 0);
 
 	// Position of the vertex, in worldspace 
-	pos = (M * vec4(position,1)).xyz;
+	pos = (M * vec4(real_pos,1)).xyz;
 
 	// Vector that goes from the vertex to the camera, in camera space.
-	vec3 vertexPosition_cameraspace = ( V * M * vec4(position,1)).xyz;
+	vec3 vertexPosition_cameraspace = ( V * M * vec4(real_pos,1)).xyz;
 
 	// Normal of the the vertex, in camera space
 	vec3 Normal_cameraspace = ( V * M * vec4(normal,0)).xyz;
 	
 	// Will be used for attenuation.
-    float distance = length(u_LightPos - vertexPosition_cameraspace);
+    float distance = length(u_LightPos - position);
  
     // Get a lighting direction vector from the light to the vertex.
     vec3 lightVector = normalize(u_LightPos - vertexPosition_cameraspace);
@@ -50,4 +52,5 @@ void main(){
  
     // Multiply the color by the illumination level. It will be interpolated across the triangle.
     v_color = diffuse;
+	offset = Offset;
 }

@@ -21,7 +21,7 @@ class Renderer
 public:
 	Renderer();
 	void render();
-	void renderGUI(int *subdivision, Noise &noise);
+	void renderGUI(int *subdivision, Noise &noise, bool *visibility);
 	void addProgram(Program *p);
 	void addObject(GLObject *obj);
 	bool isChanged();

@@ -16,7 +16,7 @@ void GLObject::draw()
 	glDrawElements(
 		GL_TRIANGLES,      // mode
 		indices.size(),    // count
-		GL_UNSIGNED_SHORT, // type
+		GL_UNSIGNED_INT, // type
 		(void*)0           // element array buffer offset
 	);
 	//glDrawArrays(GL_POINTS, 0, vertices.size());
@@ -28,9 +28,8 @@ GLuint GLObject::getProgramID()
 	return programID;
 }
 
-void GLObject::setMVP(Camera &camera)
+void GLObject::setMVP(const Camera &camera)
 {
-	currentCamera = &camera;
 	MVP = camera.getProjection() * camera.getView() * Model;
 }
 
@@ -51,11 +50,11 @@ void GLObject::generateBuffers()
 
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
 
 	glGenBuffers(1, &normalbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
 
 	glGenBuffers(1, &uvbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
@@ -63,7 +62,7 @@ void GLObject::generateBuffers()
 
 	glGenBuffers(1, &indexbuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned short), &indices[0], GL_STREAM_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
 	// 1rst attribute buffer : vertices
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);

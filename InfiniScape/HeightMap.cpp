@@ -12,9 +12,10 @@ HeightMap::HeightMap()
 	MatrixID = glGetUniformLocation(programID, "MVP");
 	ModelID = glGetUniformLocation(programID, "M");
 	ViewID = glGetUniformLocation(programID, "V");
-	//TextureID[0] = glGetUniformLocation(programID, "Height");
-	TextureID[0] = glGetUniformLocation(programID, "Grass");
-	TextureID[1] = glGetUniformLocation(programID, "Snow");
+	OffsetID = glGetUniformLocation(programID, "Offset");
+	TextureID[0] = glGetUniformLocation(programID, "Height");
+	TextureID[1] = glGetUniformLocation(programID, "Grass");
+	TextureID[2] = glGetUniformLocation(programID, "Snow");
 }
 
 void HeightMap::bindProgram(GLObject &obj, Camera &camera)
@@ -23,7 +24,8 @@ void HeightMap::bindProgram(GLObject &obj, Camera &camera)
 
 	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &(obj.getMVP())[0][0]);
 	glUniformMatrix4fv(ModelID, 1, GL_FALSE, &(obj.getModel())[0][0]);
-	glUniformMatrix4fv(ViewID, 1, GL_FALSE, &camera.getView()[0][0]);
+	glUniformMatrix4fv(ViewID, 1, GL_FALSE, &camera.getStaticView()[0][0]);
+	glUniform2f(OffsetID, camera.position.x/256, camera.position.z/256);
 
 	for (int i = 0; i < obj.getTextures().size(); i++)
 	{

@@ -7,8 +7,7 @@ class Plane :
 	GLfloat *pixels;
 	GLuint heightmapID;
 public:
-	int subdivision = 64;
-	float offsetX = 0, offsetY = 0;
+	int subdivision = 512;
 	Noise noise;
 
 
@@ -20,5 +19,6 @@ public:
 	void indexThread(int startS);
 	void pixelThread(int startS);
 	void updateHeightMap();
+	virtual void setMVP(const Camera &camera);
 };
 

@@ -12,6 +12,7 @@ class Camera
 {
 	glm::mat4 Projection;
 	glm::mat4 View;
+	glm::mat4 staticView;
 
 	float horizontalAngle = 264.662f;
 	float verticalAngle = -57.044f;
@@ -29,8 +30,8 @@ public:
 	Camera();
 
 	void computeMatrices(GLFWwindow* window);
-	glm::mat4 getProjection();
-	glm::mat4 getView();
-
+	glm::mat4 getProjection() const;
+	glm::mat4 getView() const;
+	glm::mat4 getStaticView() const;
 };
 

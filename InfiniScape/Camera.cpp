@@ -2,7 +2,7 @@
 
 Camera::Camera()
 {
-	Projection = glm::perspective(glm::radians(initialFoV), 4.0f / 3.0f, 0.1f, 300.0f);
+	Projection = glm::perspective(glm::radians(initialFoV), 4.0f / 3.0f, 0.1f, 1000.0f);
 
 	// Camera matrix
 	View = staticView = glm::lookAt(
@@ -75,7 +75,7 @@ void Camera::computeMatrices(GLFWwindow* window)
 	float FoV = initialFoV;
 
 	// Projection matrix 
-	Projection = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 300.0f);
+	Projection = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 1000.0f);
 	// Camera matrix
 	View = glm::lookAt(
 		position,           

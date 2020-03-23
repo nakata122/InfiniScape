@@ -18,7 +18,7 @@ class Camera
 	float verticalAngle = -57.044f;
 	float initialFoV = 45.0f;
 
-	float speed = 30.0f; 
+	float speed = 15.0f; 
 	float mouseSpeed = 0.002f;
 
 	double lastXpos=1;

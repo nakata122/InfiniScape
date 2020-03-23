@@ -10,7 +10,7 @@
 
 float coords(float t)
 {
-	return abs(t) / 256 + 0.8;
+	return sqrt(abs(t))/8 + 0.2;
 }
 
 Plane::Plane(int numTriangle)
@@ -42,12 +42,12 @@ Plane::Plane(int numTriangle)
 			texCoords[vertI] = glm::vec2(xCoord, yCoord);
 
 			vertI++;
-			posZ += coords(posZ);
+			posZ++;
 			//incZ += 0.01;
 
 		}
-		posX += coords(posX);
-		//incX += 0.01;
+		posX++;
+		//incX += 0.1;
 		posZ = -256;
 		//incZ = 0;
 	}
@@ -207,11 +207,6 @@ void Plane::pixelThread(int startS)
 			pixels[i*minS + j] = noise.AdvancedPerlin((float)i / 4, (float)j / 4);
 		}
 	}
-}
-
-void Plane::setMVP(const Camera &camera)
-{
-	MVP = camera.getProjection() * camera.getStaticView() * Model;
 }
 
 Plane::~Plane()

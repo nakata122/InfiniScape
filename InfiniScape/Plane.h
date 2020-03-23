@@ -19,6 +19,5 @@ public:
 	void indexThread(int startS);
 	void pixelThread(int startS);
 	void updateHeightMap();
-	virtual void setMVP(const Camera &camera);
 };
 

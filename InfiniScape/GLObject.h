@@ -26,6 +26,7 @@ protected:
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> texCoords;
 	std::vector<unsigned int> indices;
+	glm::vec4 position;
 	glm::mat4 Model;
 	glm::mat4 MVP;
 	int numTriangles;
@@ -40,7 +41,7 @@ public:
 	void generateBuffers();
 	void updatePositionBuffers(int startS);
 
-	virtual void setMVP(const Camera &camera);
+	void setMVP(const Camera &camera);
 	glm::mat4 getMVP();
 	glm::mat4 getModel();
 	GLuint getProgramID();

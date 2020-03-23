@@ -30,6 +30,7 @@ GLuint GLObject::getProgramID()
 
 void GLObject::setMVP(const Camera &camera)
 {
+	Model = glm::translate(glm::mat4(1.0f), glm::vec3(camera.position.x, camera.position.y-50, camera.position.z));
 	MVP = camera.getProjection() * camera.getView() * Model;
 }
 
